@@ -1,1 +1,1 @@
-*/5 * * * *     /usr/bin/python /home/videk-hosts/videk-hosts.py
+*/5 * * * *     /usr/bin/python /root/videk-hosts/videk-hosts.py
