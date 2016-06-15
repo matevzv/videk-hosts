@@ -37,5 +37,5 @@ hosts += "\n"
 with open("/etc/ansible/hosts", "w") as hosts_file:
     hosts_file.write(hosts)
 
-with open("/etc/ansible/hosts", "w") as munin_file:
+with open("/etc/munin/munin.conf", "w") as munin_file:
     munin_file.write(munin)
