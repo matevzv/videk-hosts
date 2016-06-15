@@ -1,10 +1,11 @@
-import requests
+import urllib2
+import json
 from itertools import groupby
 
-nodes = requests.get('http://localhost/api/nodes')
+nodes = urllib2.urlopen('http://localhost/api/nodes').read()
 
-if "No nodes found" in nodes.text:
-    print nodes.text
+if "No nodes found" in nodes:
+    print nodes
     exit()
 
 munin = ""
@@ -15,7 +16,7 @@ with open("/etc/munin/munin.conf", "r") as munin_file:
             break
 
 munin += "\n"
-nodes = nodes.json()
+nodes = json.loads(nodes)
 nodes_list = []
 for node in nodes:
     nodes_list.append((node['cluster'], node['name']))
