@@ -9,7 +9,7 @@ if "No nodes found" in nodes:
     exit()
 
 munin = ""
-with open("/etc/munin/munin.conf", "r") as munin_file:
+with open("/home/matevz/test/munin.conf", "r") as munin_file:
     for line in munin_file:
         munin += line
         if "# automagicaly generated from here on" in line:
@@ -34,8 +34,8 @@ for key, group in groupby(nodes_list, lambda x: x[0]):
 hosts = hosts[1:]
 hosts += "\n"
 
-with open("/etc/ansible/hosts", "w") as hosts_file:
+with open("/home/matevz/test/hosts", "w") as hosts_file:
     hosts_file.write(hosts)
 
-with open("/etc/ansible/hosts", "w") as munin_file:
+with open("/home/matevz/test/munin.conf", "w") as munin_file:
     munin_file.write(munin)
