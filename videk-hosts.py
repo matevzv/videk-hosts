@@ -1,11 +1,12 @@
-import urllib2
 import json
+import urllib2
+from urllib2 import URLError
 from itertools import groupby
 
-nodes = urllib2.urlopen('http://localhost/api/nodes').read()
-
-if "No nodes found" in nodes:
-    print nodes
+try:
+    nodes = urllib2.urlopen('http://localhost/api/nodes').read()
+except URLError, e:
+    print e.code
     exit()
 
 munin = ""
