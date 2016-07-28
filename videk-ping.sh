@@ -1,6 +1,6 @@
-#!/bin/bash
+ #!/bin/bash
 
-PING=`ansible 'all:!local' -m ping | grep "=> {"`
+PING=`ansible 'all:!local' -u "$ANSIBLE_USER" -m ping | grep "=> {"`
 
 NODES=(`echo "$PING" | cut -d' ' -f1,3 --output-delimiter=';'`)
 
@@ -10,7 +10,7 @@ if [ "${#NODES[@]}" -eq 0 ]; then
 fi
 
 for NODE in "${NODES[@]}"; do
-    NAME=`echo $NODE | cut -d';' -f1`
+    NAME=`echo $NODE | cut -d';' -f1 | tr '.' '-'`
     STATUS=`echo $NODE | cut -d';' -f2`
     NODE=`curl -s -X GET "http://localhost/api/nodes/?name=$NAME"`
     ID="$(echo "$NODE" | grep -Po '"_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
