@@ -1,6 +1,6 @@
  #!/bin/bash
 
-PING=`ansible 'all:!local' -u "$ANSIBLE_USER" -m ping | grep "=> {"`
+PING=`ansible 'all:!local' -m ping | grep "=> {"`
 
 NODES=(`echo "$PING" | cut -d' ' -f1,3 --output-delimiter=';'`)
 
