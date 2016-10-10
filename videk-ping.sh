@@ -2,7 +2,7 @@
 
 export SSH_AUTH_SOCK=/root/ssh-agent
 
-PING=`ansible 'all:!local' -m ping | grep "=> {"`
+PING=`timeout 300 ansible 'all:!local' -m ping | grep "=> {"`
 
 NODES=(`echo "$PING" | cut -d' ' -f1,3 --output-delimiter=';'`)
 
