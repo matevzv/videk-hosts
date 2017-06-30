@@ -4,7 +4,7 @@ from urllib2 import URLError
 from itertools import groupby
 
 try:
-    nodes = urllib2.urlopen('http://localhost/api/nodes').read()
+    nodes = urllib2.urlopen('http://localhost:3000/api/nodes').read()
 except URLError, e:
     print e.code
     exit()

@@ -14,7 +14,7 @@ fi
 for NODE in "${NODES[@]}"; do
     NAME=`echo $NODE | cut -d';' -f1 | tr '.' '-'`
     STATUS=`echo $NODE | cut -d';' -f2`
-    NODE=`curl -s -X GET "http://localhost/api/nodes/?name=$NAME"`
+    NODE=`curl -s -X GET "http://localhost:3000/api/nodes/?name=$NAME"`
     ID="$(echo "$NODE" | grep -Po '"_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
 
     if [ "$STATUS" = "SUCCESS" ]; then
@@ -22,13 +22,13 @@ for NODE in "${NODES[@]}"; do
       echo "$NAME"
       echo "$STATUS"
       curl -s -H "Content-Type: application/json" -X PUT -d \
-      '{"status":"active"}' "http://localhost/api/nodes/$ID"
+      '{"status":"active"}' "http://localhost:3000/api/nodes/$ID"
     else
       echo "--------inactive"
       echo "$NAME"
       echo "$STATUS"
       curl -s -H "Content-Type: application/json" -X PUT -d \
-      '{"status":"inactive"}' "http://localhost/api/nodes/$ID"
+      '{"status":"inactive"}' "http://localhost:3000/api/nodes/$ID"
     fi
     echo $'\n'
 done
