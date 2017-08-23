@@ -22,11 +22,13 @@ nodes_list = []
 for node in nodes:
     nodes_list.append((node['cluster'], node['name']))
     munin += "[" + node['cluster'] + ";" + node['name'] + "]\n"
-    munin += "    address " + node['name'].replace("-", ".") + "\n\n"
+    munin += "    address " + \
+        node['name'].replace("sna-lgtc-", "").replace("-", ".") + "\n\n"
 
 hosts = "[local]\nlocalhost ansible_connection=local\n"
 for key, group in groupby(nodes_list, lambda x: x[0]):
-    listOfThings = "\n".join([thing[1].replace("-", ".") for thing in group])
+    listOfThings = "\n".join([thing[1].replace("sna-lgtc-", "").\
+        replace("-", ".") for thing in group])
     hosts += "\n[" + key + "]" + "\n" + listOfThings + "\n"
     munin += "[" + key + ";]\n"
     munin += "    contacts admin\n\n"
