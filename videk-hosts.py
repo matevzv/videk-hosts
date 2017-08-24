@@ -24,7 +24,7 @@ for node in nodes:
     nodes_list.append((node['cluster'], node['name']))
     munin += "[" + node['cluster'] + ";" + node['name'] + "]\n"
     munin += "    address " + re.findall(r'[0-9]+(?:\.[0-9]+){3}', \
-        node['name'].replace("-", ".")) + "\n\n"
+        node['name'].replace("-", "."))[0] + "\n\n"
 
 hosts = "[local]\nlocalhost ansible_connection=local\n"
 for key, group in groupby(nodes_list, lambda x: x[0]):
