@@ -1,3 +1,4 @@
+import re
 import json
 import urllib2
 from urllib2 import URLError
@@ -27,8 +28,8 @@ for node in nodes:
 
 hosts = "[local]\nlocalhost ansible_connection=local\n"
 for key, group in groupby(nodes_list, lambda x: x[0]):
-    listOfThings = "\n".join([thing[1].replace("sna-lgtc-", "").\
-        replace("-", ".") for thing in group])
+    listOfThings = "\n".join([re.findall( r'[0-9]+(?:\.[0-9]+){3}', \
+        thing[1].replace("-", "."))[0] for thing in group])
     hosts += "\n[" + key + "]" + "\n" + listOfThings + "\n"
     munin += "[" + key + ";]\n"
     munin += "    contacts admin\n\n"
