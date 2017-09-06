@@ -19,25 +19,30 @@ with open("/etc/munin/munin.conf", "r") as munin_file:
 
 munin += "\n"
 nodes = json.loads(nodes)
+clusters = {}
 nodes_list = []
 for node in nodes:
-    nodes_list.append((node['cluster'], node['name']))
+    if node['cluster'] in clusters:
+        clusters[node['cluster']].append(node['name'])
+    else:
+        clusters[node['cluster']] = [node['name']]
+
     munin += "[" + node['cluster'] + ";" + node['name'] + "]\n"
     munin += "    address " + re.findall(r'[0-9]+(?:\.[0-9]+){3}', \
         node['name'].replace("-", "."))[0] + "\n\n"
 
 hosts = "[local]\nlocalhost ansible_connection=local\n"
-for key, group in groupby(nodes_list, lambda x: x[0]):
-    listOfThings = "\n".join([re.findall(r'[0-9]+(?:\.[0-9]+){3}', \
-        thing[1].replace("-", "."))[0] for thing in group])
-    hosts += "\n[" + key + "]" + "\n" + listOfThings + "\n"
-    munin += "[" + key + ";]\n"
+for cluster, nodes in clusters.items():
+    hosts += "\n[" + cluster + "]" + "\n"
+    munin += "[" + cluster + ";]\n"
     munin += "    contacts admin\n\n"
 
-hosts += "\n"
+    for node in nodes:
+        ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', node.replace("-", "."))[0]
+        hosts += ip + "\n"
 
 with open("/etc/ansible/hosts", "w") as hosts_file:
     hosts_file.write(hosts)
 
 with open("/etc/munin/munin.conf", "w") as munin_file:
-    munin_file.write(munin)
+    munin_file.write(munin[:-1])

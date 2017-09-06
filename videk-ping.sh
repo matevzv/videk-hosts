@@ -16,7 +16,7 @@ fi
 for NODE in "${NODES[@]}"; do
     NAME=`echo $NODE | cut -d';' -f1 | tr '.' '-'`
     GROUP=`echo "${NAME%-*}"`
-    PREFIX=`echo "$HOSTS" | grep -o -P "(?<=\[).*(?="$GROUP")"`
+    PREFIX=`echo "$HOSTS" | grep -m 1 -o -P "(?<=\[).*(?="$GROUP")"`
     NAME="$PREFIX""$NAME"
     STATUS=`echo $NODE | cut -d';' -f2`
     NODE=`curl -s -X GET "http://localhost:3000/api/nodes/?name=$NAME"`
