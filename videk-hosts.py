@@ -2,7 +2,6 @@ import re
 import json
 import urllib2
 from urllib2 import URLError
-from itertools import groupby
 
 try:
     nodes = urllib2.urlopen('http://localhost:3000/api/nodes').read()
