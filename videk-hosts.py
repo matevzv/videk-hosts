@@ -17,9 +17,8 @@ with open("/etc/munin/munin.conf", "r") as munin_file:
             break
 
 munin += "\n"
-nodes = json.loads(nodes)
 clusters = {}
-nodes_list = []
+nodes = json.loads(nodes)
 for node in nodes:
     if node['cluster'] in clusters:
         clusters[node['cluster']].append(node['name'])
