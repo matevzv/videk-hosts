@@ -20,14 +20,19 @@ munin += "\n"
 clusters = {}
 nodes = json.loads(nodes)
 for node in nodes:
-    if node['cluster'] in clusters:
-        clusters[node['cluster']].append(node['name'])
-    else:
-        clusters[node['cluster']] = [node['name']]
+    try:
+        ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', \
+            node['name'].replace("-", "."))[0]
 
-    munin += "[" + node['cluster'] + ";" + node['name'] + "]\n"
-    munin += "    address " + re.findall(r'[0-9]+(?:\.[0-9]+){3}', \
-        node['name'].replace("-", "."))[0] + "\n\n"
+        if node['cluster'] in clusters:
+            clusters[node['cluster']].append(node['name'])
+        else:
+            clusters[node['cluster']] = [node['name']]
+
+        munin += "[" + node['cluster'] + ";" + node['name'] + "]\n"
+        munin += "    address " + ip + "\n\n"
+    except:
+        nodes.remove(node)
 
 hosts = "[local]\nlocalhost ansible_connection=local\n"
 for cluster, nodes in clusters.items():
