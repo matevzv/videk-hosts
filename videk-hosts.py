@@ -37,6 +37,8 @@ for node in nodes:
     except:
         pass
 
+nodes = valid_nodes
+
 hosts = "[local]\nlocalhost ansible_connection=local\n"
 for cluster, nodes in clusters.items():
     hosts += "\n[" + cluster + "]" + "\n"
