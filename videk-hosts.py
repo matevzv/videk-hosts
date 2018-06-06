@@ -32,7 +32,7 @@ for node in nodes:
 
         munin += "[" + node['cluster'] + ";" + node['name'] + "]\n"
         munin += "    address " + ip + "\n\n"
-        
+
         valid_nodes.append(node)
     except:
         pass
