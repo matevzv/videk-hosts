@@ -4,7 +4,7 @@ import urllib2
 from urllib2 import URLError
 
 try:
-    nodes = urllib2.urlopen('http://localhost:3000/api/nodes').read()
+    nodes = urllib2.urlopen('http://localhost:3000/api/nodes')
 except URLError, e:
     print e.code
     exit()
@@ -18,7 +18,8 @@ with open("/etc/munin/munin.conf", "r") as munin_file:
 
 munin += "\n"
 clusters = {}
-nodes = json.loads(nodes)
+nodes = json.load(nodes)
+valid_nodes = []
 for node in nodes:
     try:
         ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', \
@@ -31,8 +32,10 @@ for node in nodes:
 
         munin += "[" + node['cluster'] + ";" + node['name'] + "]\n"
         munin += "    address " + ip + "\n\n"
+        
+        valid_nodes.append(node)
     except:
-        nodes.remove(node)
+        pass
 
 hosts = "[local]\nlocalhost ansible_connection=local\n"
 for cluster, nodes in clusters.items():
