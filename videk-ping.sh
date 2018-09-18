@@ -52,7 +52,6 @@ for NODE in "${NODES[@]}"; do
             curl -s -H "Content-Type: application/json" -X PUT -d \
             '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
         fi
-        echo
+        echo ; echo
     fi
-    echo
 done
