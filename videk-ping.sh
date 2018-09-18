@@ -16,24 +16,43 @@ fi
 for NODE in "${NODES[@]}"; do
     NAME=`echo $NODE | cut -d';' -f1 | tr '.' '-'`
     GROUP=`echo "${NAME%-*}"`
-    PREFIX=`echo "$HOSTS" | grep -m 1 -o -P "(?<=\[).*(?="$GROUP")"`
-    NAME="$PREFIX""$NAME"
-    STATUS=`echo $NODE | cut -d';' -f2`
-    NODE=`curl -s -X GET "http://localhost:3000/api/nodes/?name=$NAME"`
-    ID="$(echo "$NODE" | grep -Po '"_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
+    PREFIX=`echo "$HOSTS" | grep -o -P "(?<=\[).*(?="$GROUP")"`
 
-    if [ "$STATUS" = "SUCCESS" ]; then
-      echo "--------active"
-      echo "$NAME"
-      echo "$STATUS"
-      curl -s -H "Content-Type: application/json" -X PUT -d \
-      '{"status":"active"}' "http://localhost:3000/api/nodes/$ID"
+    if [ $(echo "$PREFIX" | wc -l) -ne "1" ]; then
+        while read -r line; do
+            TMP="$line""$NAME"
+            HOST="$PREFIX""$NAME"
+            STATUS=`echo $NODE | cut -d';' -f2`
+            NODE=`curl -s -X GET "http://localhost:3000/api/nodes/?name=$HOST"`
+            ID="$(echo "$NODE" | grep -Po '"_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
+            MID="$(echo "$NODE" | grep -Po '"machine_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
+            echo "--------inactive"
+            echo "$HOST"
+            echo "$STATUS"
+            curl -s -H "Content-Type: application/json" -X PUT -d \
+              '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
+            echo ""
+        done <<< "$PREFIX"
     else
-      echo "--------inactive"
-      echo "$NAME"
-      echo "$STATUS"
-      curl -s -H "Content-Type: application/json" -X PUT -d \
-      '{"status":"inactive"}' "http://localhost:3000/api/nodes/$ID"
+        HOST="$PREFIX""$NAME"
+        STATUS=`echo $NODE | cut -d';' -f2`
+        NODE=`curl -s -X GET "http://localhost:3000/api/nodes/?name=$HOST"`
+        ID="$(echo "$NODE" | grep -Po '"_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
+        MID="$(echo "$NODE" | grep -Po '"machine_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
+
+        if [ "$STATUS" = "SUCCESS" ]; then
+            echo "--------active"
+            echo "$HOST"
+            echo "$STATUS"
+            curl -s -H "Content-Type: application/json" -X PUT -d \
+            '{"status":"active"}' "http://localhost:3000/api/nodes/$ID"
+        else
+            echo "--------inactive"
+            echo "$HOST"
+            echo "$STATUS"
+            curl -s -H "Content-Type: application/json" -X PUT -d \
+            '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
+        fi
     fi
-    echo $'\n'
+    echo ""
 done
