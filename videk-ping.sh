@@ -20,8 +20,7 @@ for NODE in "${NODES[@]}"; do
 
     if [ $(echo "$PREFIX" | wc -l) -ne "1" ]; then
         while read -r line; do
-            TMP="$line""$NAME"
-            HOST="$PREFIX""$NAME"
+            HOST="$line""$NAME"
             STATUS=`echo $NODE | cut -d';' -f2`
             NODE=`curl -s -X GET "http://localhost:3000/api/nodes/?name=$HOST"`
             ID="$(echo "$NODE" | grep -Po '"_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
@@ -31,7 +30,7 @@ for NODE in "${NODES[@]}"; do
             echo "$STATUS"
             curl -s -H "Content-Type: application/json" -X PUT -d \
               '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
-            echo ""
+            echo -e "\n\n"
         done <<< "$PREFIX"
     else
         HOST="$PREFIX""$NAME"
@@ -51,8 +50,9 @@ for NODE in "${NODES[@]}"; do
             echo "$HOST"
             echo "$STATUS"
             curl -s -H "Content-Type: application/json" -X PUT -d \
-            '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
+              '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
         fi
+        echo ""
     fi
     echo ""
 done
