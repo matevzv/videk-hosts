@@ -29,8 +29,9 @@ for NODE in "${NODES[@]}"; do
             echo "$HOST"
             echo "$STATUS"
             curl -s -H "Content-Type: application/json" -X PUT -d \
-              '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
-            echo -e "\n\n"
+            '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
+            echo ""
+            echo ""
         done <<< "$PREFIX"
     else
         HOST="$PREFIX""$NAME"
@@ -50,7 +51,7 @@ for NODE in "${NODES[@]}"; do
             echo "$HOST"
             echo "$STATUS"
             curl -s -H "Content-Type: application/json" -X PUT -d \
-              '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
+            '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
         fi
         echo ""
     fi
