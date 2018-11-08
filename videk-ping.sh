@@ -14,26 +14,22 @@ if [ "${#NODES[@]}" -eq 0 ]; then
 fi
 
 for NODE in "${NODES[@]}"; do
-    NAME=`echo $NODE | cut -d';' -f1 | tr '.' '-'`
-    GROUP=`echo "${NAME%-*}"`
-    PREFIX=`echo "$HOSTS" | grep -o -P "(?<=\[).*(?="$GROUP")"`
-
-    if [ $(echo "$PREFIX" | wc -l) -ne "1" ]; then
-        while read -r line; do
-            HOST="$line""$NAME"
-            STATUS=`echo $NODE | cut -d';' -f2`
-            NODE=`curl -s -X GET "http://localhost:3000/api/nodes/?name=$HOST"`
-            ID="$(echo "$NODE" | grep -Po '"_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
-            MID="$(echo "$NODE" | grep -Po '"machine_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
-            echo "--------inactive"
-            echo "$HOST"
-            echo "$STATUS"
-            curl -s -H "Content-Type: application/json" -X PUT -d \
-            '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
-            echo ; echo
-        done <<< "$PREFIX"
+    IP=`echo $NODE | cut -d';' -f1`
+    PREFIX=`echo "$HOSTS" | sed /"$IP"/q | grep -o -P '(?<=\[).*(?=\])' | tail -1`
+    if [ $(echo "$HOSTS" | grep "$IP" | wc -l) -ne "1" ] || [ $(echo "$HOSTS" | grep "$PREFIX" | wc -l) -ne "1" ]; then
+        HOST="$PREFIX""-""$(echo $IP | cut -d'.' -f4)"
+        STATUS=`echo $NODE | cut -d';' -f2`
+        NODE=`curl -s -X GET "http://localhost:3000/api/nodes/?name=$HOST"`
+        ID="$(echo "$NODE" | grep -Po '"_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
+        MID="$(echo "$NODE" | grep -Po '"machine_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
+        echo "--------inactive"
+        echo "$HOST"
+        echo "$STATUS"
+        curl -s -H "Content-Type: application/json" -X PUT -d \
+        '{"status":"inactive","name":"tmp-'"$MID"'"}' "http://localhost:3000/api/nodes/$ID"
+        echo ; echo
     else
-        HOST="$PREFIX""$NAME"
+        HOST="$PREFIX""-""$(echo $IP | cut -d'.' -f4)"
         STATUS=`echo $NODE | cut -d';' -f2`
         NODE=`curl -s -X GET "http://localhost:3000/api/nodes/?name=$HOST"`
         ID="$(echo "$NODE" | grep -Po '"_id":(\d*?,|.*?[^\\]")' | cut -d'"' -f4)"
