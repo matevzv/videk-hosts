@@ -42,16 +42,13 @@ for node in nodes:
     if "ebottle" in node['cluster']:
         ts = int(time.time()) - 30*60
         ts = datetime.fromtimestamp(ts).isoformat()
-        print(ts)
         url = videk + "api/measurements?node_id=" + node["_id"] + "&from=" + ts
         measurements = requests.get(url).json()
 
         if "No measurements" in measurements:
             requests.put(videk + "api/nodes/" + str(node["_id"]), data={"status":"inactive"})
-            print("inactive")
         else:
             requests.put(videk + "api/nodes/" + str(node["_id"]), data={"status":"active"})
-            print("active")
 
 nodes = valid_nodes
 
