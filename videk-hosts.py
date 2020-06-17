@@ -1,12 +1,14 @@
 import re
+import time
 import json
-import urllib2
-from urllib2 import URLError
+import requests
+from datetime import datetime
+
+videk = 'http://localhost:3000/'
 
 try:
-    nodes = urllib2.urlopen('http://localhost:3000/api/nodes')
-except URLError, e:
-    print e.code
+    nodes = requests.get(videk + 'api/nodes')
+except:
     exit()
 
 munin = ""
@@ -18,7 +20,7 @@ with open("/etc/munin/munin.conf", "r") as munin_file:
 
 munin += "\n"
 clusters = {}
-nodes = json.load(nodes)
+nodes = nodes.json()
 valid_nodes = []
 for node in nodes:
     try:
@@ -36,6 +38,20 @@ for node in nodes:
         valid_nodes.append(node)
     except:
         pass
+
+    if "ebottle" in node['cluster']:
+        ts = int(time.time()) - 60*60
+        ts = datetime.fromtimestamp(ts).isoformat()
+        print(ts)
+        url = videk + "api/measurements?node_id=" + node["_id"] + "&from=" + ts
+        measurements = requests.get(url).json()
+
+        if "No measurements" in measurements:
+            requests.put(videk + "api/nodes/" + str(node["_id"]), data={"status":"inactive"})
+            print("inactive")
+        else:
+            requests.put(videk + "api/nodes/" + str(node["_id"]), data={"status":"active"})
+            print("active")
 
 nodes = valid_nodes
 
