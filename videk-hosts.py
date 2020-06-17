@@ -40,7 +40,7 @@ for node in nodes:
         pass
 
     if "ebottle" in node['cluster']:
-        ts = int(time.time()) - 60*60
+        ts = int(time.time()) - 30*60
         ts = datetime.fromtimestamp(ts).isoformat()
         print(ts)
         url = videk + "api/measurements?node_id=" + node["_id"] + "&from=" + ts
