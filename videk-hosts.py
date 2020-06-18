@@ -34,7 +34,7 @@ for node in nodes:
             clusters[node['cluster']] = [node['name']]
 
         munin += "[" + node['cluster'] + ";" + node['name'] + "]\n"
-        munin += "    address " + ip[0] + "\n\n"
+        munin += "    address " + ip + "\n\n"
 
         valid_nodes.append(node)
 
