@@ -23,23 +23,23 @@ clusters = {}
 nodes = nodes.json()
 valid_nodes = []
 for node in nodes:
-    try:
-        ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', \
-            node['name'].replace("-", "."))[0]
+    ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', \
+        node['name'].replace("-", "."))
 
+    if ip:
+        ip = ip[0]
+        
         if node['cluster'] in clusters:
             clusters[node['cluster']].append(node['name'])
         else:
             clusters[node['cluster']] = [node['name']]
 
         munin += "[" + node['cluster'] + ";" + node['name'] + "]\n"
-        munin += "    address " + ip + "\n\n"
+        munin += "    address " + ip[0] + "\n\n"
 
         valid_nodes.append(node)
-    except:
-        pass
 
-    if "ebottle" in node['cluster']:
+    elif "ebottle" in node['cluster']:
         ts = int(time.time()) - 30*60
         ts = datetime.fromtimestamp(ts).isoformat()
         url = videk + "api/measurements?node_id=" + node["_id"] + "&from=" + ts
