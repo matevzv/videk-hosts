@@ -23,7 +23,7 @@ clusters = {}
 nodes = nodes.json()
 valid_nodes = []
 for node in nodes:
-    ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', node.replace("-", "."))
+    ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', node['name'].replace("-", "."))
 
     if ip:
         ip = ip[0]
