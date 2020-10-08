@@ -2,7 +2,7 @@
 
 export SSH_AUTH_SOCK=/root/ssh-agent
 
-PING=`timeout 300 ansible 'all:!local' -m ping --forks 100 | grep "=> {"`
+PING=`timeout 300 ansible 'all:!local' -m ping -T 60 --forks 100 | grep "=> {"`
 
 HOSTS=`cat /etc/ansible/hosts`
 
