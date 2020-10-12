@@ -15,7 +15,7 @@ fi
 
 for NODE in "${NODES[@]}"; do
     IP=`echo $NODE | cut -d';' -f1`
-    PREFIX=`echo "$HOSTS" | sed /"$IP"/q | grep -o -P '(?<=\[).*(?=\])' | tail -1`
+    PREFIX=`echo "$HOSTS" | sed /"$IP$"/q | grep -o -P '(?<=\[).*(?=\])' | tail -1`
     if [ $(echo "$HOSTS" | grep -wc "$IP") -ne "1" ] || [ $(echo "$HOSTS" | grep -wc "$PREFIX") -ne "1" ]; then
         HOST="$PREFIX""-""$(echo $IP | cut -d'.' -f4)"
         STATUS=`echo $NODE | cut -d';' -f2`
